@@ -14,7 +14,8 @@ import {
 
 import { createCommentBodySchema } from '../comments/comments.schemas.js';
 import { ticketIdParamSchema as idSchema } from '../comments/comments.schemas.js';
-
+import { statusHistory } from '../status-history/status-history.controller.js';
+import { paginationQuerySchema } from './ticket.schemas.js';
 export const ticketRoutes = Router();
 
 ticketRoutes.use(requireAuth);
@@ -166,5 +167,13 @@ ticketRoutes.get(
   validate({ params: idSchema }),
   (req, res, next) => {
     commentController.getCommentByTicketId(req, res).catch(next);
+  }
+);
+
+ticketRoutes.get(
+  '/:ticketId/status-history',
+  validate({ params: idSchema, query: paginationQuerySchema }),
+  (req, res, next) => {
+    statusHistory.getStatusHistory(req, res).catch(next);
   }
 );
