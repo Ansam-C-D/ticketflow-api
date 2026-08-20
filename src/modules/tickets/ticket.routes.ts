@@ -11,6 +11,7 @@ import {
   updateTicketSchema
 } from './ticket.schemas.js';
 import { commentRoutes } from '../comments/comments.routes.js';
+import { statusHistoryRoutes } from '../statusHistories/statusHistory.routes.js';
 
 export const ticketRoutes = Router();
 
@@ -132,12 +133,28 @@ ticketRoutes.patch(
 
 /**
  * @openapi
- * /api/tickets/{id}/assign:
+ * /api/tickets/{id}/status:
  *   patch:
- *     summary: Assign a ticket to an admin or agent
+ *     summary: update status of ticket
  *     tags: [Tickets]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *          type: string
+ *     requestBody:
+ *        description: update status path description
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *             type: object
+ *             required: status
+ *             properties:
+ *               status: {type: string}
  *     responses:
  *       200:
  *         description: Assignment updated
@@ -151,3 +168,5 @@ ticketRoutes.patch(
 );
 
 ticketRoutes.use('/:id/comments', commentRoutes);
+
+ticketRoutes.use('/:id/status-history', statusHistoryRoutes);

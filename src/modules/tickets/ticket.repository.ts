@@ -1,5 +1,6 @@
 import type { Prisma, TicketPriority, TicketStatus } from '@prisma/client';
 import { prisma } from '../../db/prisma.js';
+import { NotFoundError } from '../../utils/errors.js';
 
 const ticketInclude = {
   createdBy: {
@@ -81,6 +82,46 @@ export class TicketRepository {
       data,
       include: ticketInclude
     });
+  }
+
+  async updateStatus(
+    id: string,
+    data: {
+      oldStatus: TicketStatus;
+      nextStatus: TicketStatus;
+      changedBy: string;
+    }
+  ) {
+    const result = await prisma.$transaction(async (tx) => {
+      const oldTicket = await tx.ticket.findFirst({
+        where: { id }
+      });
+
+      if (!oldTicket) {
+        throw new NotFoundError('404', 'TICKET_NOT_FOUND');
+      }
+
+      const newTicket = await tx.ticket.update({
+        where: { id },
+        data: {
+          status: data.nextStatus
+        },
+        include: ticketInclude
+      });
+
+      await tx.statusHistory.create({
+        data: {
+          ticketId: id,
+          fromStatus: oldTicket.status,
+          toStatus: newTicket.status,
+          changedById: data.changedBy
+        }
+      });
+
+      return newTicket;
+    });
+
+    return result;
   }
 
   async delete(id: string) {
