@@ -45,4 +45,12 @@ export class CommentRepository {
     ]);
     return { items, total };
   }
+
+  async findById(id: string) {
+    const [data, total] = await Promise.all([
+      prisma.comment.findMany({ where: { id } }),
+      prisma.comment.count({ where: { id } })
+    ]);
+    return { data, total };
+  }
 }
