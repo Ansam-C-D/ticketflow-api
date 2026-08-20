@@ -1,7 +1,7 @@
 import type { Prisma, TicketPriority, TicketStatus } from '@prisma/client';
 import { prisma } from '../../db/prisma.js';
 
-const ticketInclude = {
+export const ticketInclude = {
   createdBy: {
     select: {
       id: true,
