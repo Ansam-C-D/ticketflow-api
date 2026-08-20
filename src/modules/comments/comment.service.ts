@@ -1,9 +1,12 @@
-import type { AuthUser } from '../../types/auth';
-import { ForbiddenError, NotFoundError } from '../../utils/errors';
+import type { AuthUser } from '../../types/auth.js';
+import { ForbiddenError, NotFoundError } from '../../utils/errors.js';
 import { canViewTicket } from '../../utils/permissions';
-import { TicketRepository } from '../tickets/ticket.repository';
-import { CommentRepository } from './comment.repository';
-import type { CreateCommentInput, ListCommentsQuery } from './comment.schema';
+import { TicketRepository } from '../tickets/ticket.repository.js';
+import { CommentRepository } from './comment.repository.js';
+import type {
+  CreateCommentInput,
+  ListCommentsQuery
+} from './comment.schema.js';
 
 const ticketRepository = new TicketRepository();
 const commentRepository = new CommentRepository();

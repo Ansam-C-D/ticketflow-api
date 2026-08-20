@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { paginationQuerySchema } from '../tickets/ticket.schemas';
+import { paginationQuerySchema } from '../tickets/ticket.schemas.js';
 
 export const createCommentSchema = z.object({
   body: z.string().min(10).max(5000)

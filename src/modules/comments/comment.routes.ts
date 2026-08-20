@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/auth.middleware';
-import { validate } from '../../middleware/validation.middleware';
-import { createCommentSchema, listCommentsQuerySchema } from './comment.schema';
-import { commentController } from './comment.controller';
-import { ticketIdParamSchema } from '../tickets/ticket.schemas';
+import { requireAuth } from '../../middleware/auth.middleware.js';
+import { validate } from '../../middleware/validation.middleware.js';
+import {
+  createCommentSchema,
+  listCommentsQuerySchema
+} from './comment.schema.js';
+import { commentController } from './comment.controller.js';
+import { ticketIdParamSchema } from '../tickets/ticket.schemas.js';
 
 export const commentRoutes = Router({ mergeParams: true });
 commentRoutes.use(requireAuth);
