@@ -19,7 +19,7 @@ import type {
   ListTicketsQuery,
   UpdateTicketInput
 } from './ticket.schemas.js';
-
+import { canViewTicket } from '../../utils/permissions.js';
 const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: [TicketStatus.IN_PROGRESS, TicketStatus.CLOSED],
   IN_PROGRESS: [TicketStatus.RESOLVED, TicketStatus.OPEN],
@@ -39,14 +39,6 @@ type ListTicketsInput = ListTicketsQuery & {
 };
 
 const repository = new TicketRepository();
-
-function canViewTicket(user: AuthUser, ticket: TicketWithRelations) {
-  if (user.role === Role.ADMIN || user.role === Role.AGENT) {
-    return true;
-  }
-
-  return ticket.createdById === user.userId;
-}
 
 function canUpdateTicket(user: AuthUser, ticket: TicketWithRelations) {
   if (user.role === Role.ADMIN) {
