@@ -14,7 +14,11 @@ type SeedUser = {
   password: string;
   role: Role;
 };
-
+type SeedComment = {
+  ticketId: string;
+  authorId: string;
+  body: string;
+};
 const users: SeedUser[] = [
   {
     email: 'admin@example.com',
@@ -162,6 +166,71 @@ async function main() {
         id: `${ticket.title.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-')}`,
         ...ticket
       }
+    });
+  }
+  const comments: SeedComment[] = [
+    {
+      ticketId: 'webhook-delivery-retries-stuck',
+      authorId: byEmail.get('user1@example.com')!.id,
+      body: 'Ticket should be resolved immediately'
+    },
+    {
+      ticketId: 'webhook-delivery-retries-stuck',
+      authorId: byEmail.get('user1@example.com')!.id,
+      body: 'Thank you'
+    },
+    {
+      ticketId: 'cannot-update-profile',
+      authorId: byEmail.get('agent@example.com')!.id,
+      body: 'Resolved on time'
+    }
+  ];
+  for (const cmt of comments) {
+    await prisma.comment.upsert({
+      where: {
+        id: `${cmt.body
+          .toLowerCase()
+          .replaceAll(/[^a-z0-9]+/g, '-')
+          .slice(0, 10)}`
+      },
+      update: {
+        ...cmt
+      },
+      create: {
+        id: `${cmt.body
+          .toLowerCase()
+          .replaceAll(/[^a-z0-9]+/g, '-')
+          .slice(0, 10)}`,
+        ...cmt
+      }
+    });
+  }
+
+  const history = [
+    {
+      ticketId: 'mobile-layout-broken',
+      fromStatus: TicketStatus.CLOSED,
+      toStatus: TicketStatus.OPEN,
+      changedById: byEmail.get('user2@example.com')!.id
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('user2@example.com')!.id
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      fromStatus: TicketStatus.IN_PROGRESS,
+      toStatus: TicketStatus.CLOSED,
+      changedById: byEmail.get('user1@example.com')!.id
+    }
+  ];
+  for (const hist of history) {
+    await prisma.status_History.upsert({
+      where: { id: `${hist.ticketId}+${hist.fromStatus}` },
+      update: hist,
+      create: { id: `${hist.ticketId}+${hist.fromStatus}`, ...hist }
     });
   }
 }

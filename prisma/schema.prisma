@@ -7,6 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  name            String
+  role            Role      @default(USER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  comments        Comment[] @relation("commentedBy")
+  assignedTickets Ticket[]  @relation("AssignedTickets")
+  createdTickets  Ticket[]  @relation("CreatedTickets")
+  statusChangedTickets Status_History[] @relation("changedBy")
+}
+
+model Ticket {
+  id           String         @id @default(cuid())
+  title        String
+  description  String
+  status       TicketStatus   @default(OPEN)
+  priority     TicketPriority @default(MEDIUM)
+  createdById  String
+  assignedToId String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  comments     Comment[]      @relation("relatedComment")
+  status_logs Status_History[] @relation("relatedTicket")
+  assignedTo   User?          @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  createdBy    User           @relation("CreatedTickets", fields: [createdById], references: [id])
+
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+}
+
+model Comment {
+  id            String   @id @default(cuid())
+  ticketId      String
+  authorId      String
+  body          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  author        User     @relation("commentedBy", fields: [authorId], references: [id], onDelete: Cascade)
+  relatedTicket Ticket   @relation("relatedComment", fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([authorId])
+}
+
+model Status_History {
+  id String @id @default(cuid())
+  ticketId String
+  fromStatus TicketStatus
+  toStatus TicketStatus
+  changedById String
+  createdAt DateTime @default(now())
+
+  relatedTicket Ticket @relation("relatedTicket",fields:[ticketId],references:[id],onDelete:Cascade)
+  changedUser User @relation("changedBy",fields:[changedById],references:[id])
+
+  @@index([ticketId])
+  @@index([changedById])
+}
+
 enum Role {
   ADMIN
   AGENT
@@ -25,35 +89,4 @@ enum TicketPriority {
   MEDIUM
   HIGH
   URGENT
-}
-
-model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  passwordHash    String
-  name            String
-  role            Role     @default(USER)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  createdTickets  Ticket[] @relation("CreatedTickets")
-  assignedTickets Ticket[] @relation("AssignedTickets")
-}
-
-model Ticket {
-  id           String         @id @default(cuid())
-  title        String
-  description  String
-  status       TicketStatus   @default(OPEN)
-  priority     TicketPriority @default(MEDIUM)
-  createdById  String
-  assignedToId String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  createdBy    User           @relation("CreatedTickets", fields: [createdById], references: [id], onDelete: Restrict)
-  assignedTo   User?          @relation("AssignedTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
-
-  @@index([createdById])
-  @@index([assignedToId])
-  @@index([status])
-  @@index([priority])
 }
