@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.middleware.js';
 import { validate } from '../../middleware/validation.middleware.js';
 import { ticketController } from './ticket.controller.js';
+import { commentController } from '../comments/comments.controller.js';
 import {
   assignTicketSchema,
   changeTicketStatusSchema,
@@ -10,6 +11,9 @@ import {
   ticketIdParamSchema,
   updateTicketSchema
 } from './ticket.schemas.js';
+
+import { createCommentBodySchema } from '../comments/comments.schemas.js';
+import { ticketIdParamSchema as idSchema } from '../comments/comments.schemas.js';
 
 export const ticketRoutes = Router();
 
@@ -146,5 +150,21 @@ ticketRoutes.patch(
   validate({ params: ticketIdParamSchema, body: assignTicketSchema }),
   (req, res, next) => {
     ticketController.assign(req, res).catch(next);
+  }
+);
+
+ticketRoutes.post(
+  '/:ticketId/comments',
+  validate({ params: idSchema, body: createCommentBodySchema }),
+  (req, res, next) => {
+    commentController.createComment(req, res).catch(next);
+  }
+);
+
+ticketRoutes.get(
+  '/:ticketId/comments',
+  validate({ params: idSchema }),
+  (req, res, next) => {
+    commentController.getCommentByTicketId(req, res).catch(next);
   }
 );
