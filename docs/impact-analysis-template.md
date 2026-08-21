@@ -2,40 +2,48 @@
 
 ## Existing Request Flow
 
-Describe the current request flow.
+Current Application - Admin can create user and agents, User can create tickets, and view their own tickets. Agents and admin can view all tickets. Admin can assign ticket to agents. Admin and agents can update status.
 
 ## Database Impact
 
-Which tables/models need to change?
+Create new model for comments and status history
 
 ## API Impact
 
-Which endpoints need to be added or changed?
+Following endpoints need to be added  
+  
+```http
+POST /api/tickets/:ticketId/comments
+GET  /api/tickets/:ticketId/comments
+GET /api/tickets/:ticketId/status-history
+```
 
 ## Service Impact
 
-Which services need to change?
+Create new service for comments(create, view), statusHistory(view)  
+Update ticket service for update status to create statusHistory
 
 ## Repository/Data Access Impact
 
-Which repositories need to change?
+Create new repository for comments(create, view), statusHistory(view)  
+Update ticket repository for update status to create statusHistory
 
 ## Authorization Impact
 
-Which permissions need to be added or modified?
+Most Permissions remain same
 
 ## Testing Impact
 
-Which tests need to be added?
+Added integrations testing for comments and status history
 
 ## Migration Plan
 
-What database migration is required?
+Added relations between tickets and users to new added database
 
 ## Risks
 
-What could break?
+Proper validation of data recieved from user
 
 ## Out of Scope
 
-What will not be changed?
+User module will not be changed
