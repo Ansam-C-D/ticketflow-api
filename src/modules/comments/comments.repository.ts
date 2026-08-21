@@ -48,7 +48,10 @@ export class CommentRepository {
 
   async findByTicketId(id: string) {
     const [data, total] = await Promise.all([
-      prisma.comment.findMany({ where: { ticketId: id } }),
+      prisma.comment.findMany({
+        where: { ticketId: id },
+        include: commentInclude
+      }),
       prisma.comment.count({ where: { ticketId: id } })
     ]);
     return { data, total };

@@ -7,8 +7,7 @@ export const createCommentSchema = z.object({
 });
 
 export const createCommentBodySchema = z.object({
-  body: z.string().min(1),
-  authorId: z.string().min(1)
+  body: z.string().min(1)
 });
 
 export const getCommentSchema = z.object({

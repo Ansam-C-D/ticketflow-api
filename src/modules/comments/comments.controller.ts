@@ -1,11 +1,16 @@
 import { CommentService } from './comments.service.js';
 import type { Request, Response } from 'express';
 import type { CreateCommentInput } from './comments.schemas.js';
-
+import type { AuthenticatedRequest } from '../../types/auth.js';
+function authUser(request: Request) {
+  return (request as AuthenticatedRequest).user!;
+}
 const service = new CommentService();
 export class CommentController {
   async createComment(req: Request, res: Response) {
+    const user = authUser(req);
     const data = {
+      authorId: user.userId,
       ticketId: String(req.params.ticketId),
       ...req.body
     } as CreateCommentInput;
