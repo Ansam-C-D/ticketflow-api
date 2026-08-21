@@ -117,11 +117,11 @@ export class TicketRepository {
         toStatus: data.status as TicketStatus,
         changedById: userId
       };
-      const history = await tx.status_History.create({
+      await tx.status_History.create({
         data: val,
         include: statusInclude
       });
-      return { updated, history };
+      return updated;
     });
   }
 
