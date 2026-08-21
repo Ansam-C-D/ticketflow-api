@@ -20,6 +20,23 @@ const ticketInclude = {
   }
 } satisfies Prisma.TicketInclude;
 
+const statusInclude = {
+  relatedTicket: {
+    select: {
+      id: true,
+      title: true
+    }
+  },
+  changedUser: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  }
+};
+
 export type TicketWithRelations = Prisma.TicketGetPayload<{
   include: typeof ticketInclude;
 }>;
@@ -80,6 +97,31 @@ export class TicketRepository {
       where: { id },
       data,
       include: ticketInclude
+    });
+  }
+  async statusUpate(
+    id: string,
+    userId: string,
+    data: Prisma.TicketUncheckedUpdateInput
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const ticket = await this.findById(id);
+      const updated = await tx.ticket.update({
+        where: { id },
+        data,
+        include: ticketInclude
+      });
+      const val = {
+        ticketId: id,
+        fromStatus: ticket!.status,
+        toStatus: data.status as TicketStatus,
+        changedById: userId
+      };
+      const history = await tx.status_History.create({
+        data: val,
+        include: statusInclude
+      });
+      return { updated, history };
     });
   }
 
