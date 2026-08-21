@@ -56,8 +56,12 @@ function run(command: string) {
 
 export async function resetTestDatabase() {
   run('npx prisma migrate deploy');
-  await prisma.ticket.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.$transaction([
+    prisma.comment.deleteMany(),
+    prisma.status_History.deleteMany(),
+    prisma.ticket.deleteMany(),
+    prisma.user.deleteMany()
+  ]);
   run('npm run db:seed');
 }
 
