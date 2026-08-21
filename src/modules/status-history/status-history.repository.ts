@@ -39,7 +39,7 @@ export class StatusHistoryRepo {
         take: pagination.limit,
         include: statusInclude
       }),
-      prisma.status_History.count()
+      prisma.status_History.count({ where: { ticketId: id } })
     ]);
     return { data, total };
   }
