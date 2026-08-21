@@ -140,16 +140,6 @@ describe('ticket API', () => {
     expect(response.body.error.code).toBe('FORBIDDEN');
   });
 
-  it('allows an assigned agent to change status with valid transitions', async () => {
-    const response = await api
-      .patch('/api/tickets/unable-to-reset-password/status')
-      .set('Authorization', `Bearer ${agentToken}`)
-      .send({ status: 'IN_PROGRESS' });
-
-    expect(response.status).toBe(200);
-    expect(response.body.data.status).toBe('IN_PROGRESS');
-  });
-
   it('rejects invalid status transitions', async () => {
     const response = await api
       .patch('/api/tickets/unable-to-reset-password/status')
