@@ -164,6 +164,124 @@ async function main() {
       }
     });
   }
+  const commentInputs = [
+    {
+      ticketId: 'unable-to-reset-password',
+      authorId: byEmail.get('user1@example.com')!.id,
+      body: 'This issue started yesterday.'
+    },
+    {
+      ticketId: 'unable-to-reset-password',
+      authorId: byEmail.get('agent@example.com')!.id,
+      body: "We're checking the email service."
+    },
+    {
+      ticketId: 'payment-failed-during-checkout',
+      authorId: byEmail.get('user2@example.com')!.id,
+      body: 'It fails with both Visa and Mastercard.'
+    },
+    {
+      ticketId: 'payment-failed-during-checkout',
+      authorId: byEmail.get('agent@example.com')!.id,
+      body: "We've reproduced the problem."
+    },
+    {
+      ticketId: 'dashboard-loading-slowly',
+      authorId: byEmail.get('agent@example.com')!.id,
+      body: 'Performance fix has been deployed.'
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      authorId: byEmail.get('admin@example.com')!.id,
+      body: 'Closing after confirming the fix.'
+    }
+  ];
+
+  for (const c of commentInputs) {
+    await prisma.comment.create({
+      data: c
+    });
+  }
+
+  const historyInputs = [
+    {
+      ticketId: 'unable-to-reset-password',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: null,
+      changedById: byEmail.get('user1@example.com')!.id
+    },
+    {
+      ticketId: 'payment-failed-during-checkout',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'dashboard-loading-slowly',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'dashboard-loading-slowly',
+      fromStatus: TicketStatus.IN_PROGRESS,
+      toStatus: TicketStatus.RESOLVED,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'email-notifications-not-arriving',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: null,
+      changedById: byEmail.get('user2@example.com')!.id
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      fromStatus: TicketStatus.IN_PROGRESS,
+      toStatus: TicketStatus.RESOLVED,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'incorrect-invoice-total',
+      fromStatus: TicketStatus.RESOLVED,
+      toStatus: TicketStatus.CLOSED,
+      changedById: byEmail.get('admin@example.com')!.id
+    },
+    {
+      ticketId: 'export-report-fails',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'search-results-are-inconsistent',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: TicketStatus.IN_PROGRESS,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'search-results-are-inconsistent',
+      fromStatus: TicketStatus.IN_PROGRESS,
+      toStatus: TicketStatus.RESOLVED,
+      changedById: byEmail.get('agent@example.com')!.id
+    },
+    {
+      ticketId: 'webhook-delivery-retries-stuck',
+      fromStatus: TicketStatus.OPEN,
+      toStatus: null,
+      changedById: byEmail.get('admin@example.com')!.id
+    }
+  ];
+  for (const historyInput of historyInputs) {
+    await prisma.statusHistory.create({
+      data: historyInput
+    });
+  }
 }
 
 main()

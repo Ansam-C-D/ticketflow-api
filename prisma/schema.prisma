@@ -37,6 +37,8 @@ model User {
   updatedAt       DateTime @updatedAt
   createdTickets  Ticket[] @relation("CreatedTickets")
   assignedTickets Ticket[] @relation("AssignedTickets")
+  comments        Comment[]
+  statusChange  StatusHistory[]
 }
 
 model Ticket {
@@ -51,9 +53,34 @@ model Ticket {
   updatedAt    DateTime       @updatedAt
   createdBy    User           @relation("CreatedTickets", fields: [createdById], references: [id], onDelete: Restrict)
   assignedTo   User?          @relation("AssignedTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  comments     Comment[]
+  statusHistory StatusHistory[]
+
 
   @@index([createdById])
   @@index([assignedToId])
   @@index([status])
   @@index([priority])
+}
+
+model Comment{
+  id String   @id @default(cuid())
+  ticketId String
+  authorId String
+  ticket Ticket   @relation(fields: [ticketId],references: [id])
+  body String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  author User @relation(fields: [authorId],references: [id])
+
+}
+model StatusHistory{
+  id String @id @default(cuid())
+  ticketId String 
+  fromStatus TicketStatus
+  toStatus TicketStatus?
+  changedById String
+  createdAt DateTime @default(now())
+  ticket Ticket @relation(fields: [ticketId],references: [id])
+  changedBy User @relation(fields: [changedById],references: [id])
 }

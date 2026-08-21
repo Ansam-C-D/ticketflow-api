@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import type { AuthenticatedRequest } from '../../types/auth.js';
 import type {
   AssignTicketInput,
   ChangeTicketStatusInput,
@@ -8,12 +7,9 @@ import type {
   UpdateTicketInput
 } from './ticket.schemas.js';
 import { TicketService } from './ticket.service.js';
+import { authUser } from '../../utils/permissions.js';
 
 const ticketService = new TicketService();
-
-function authUser(request: Request) {
-  return (request as AuthenticatedRequest).user!;
-}
 
 export class TicketController {
   async create(request: Request, response: Response) {

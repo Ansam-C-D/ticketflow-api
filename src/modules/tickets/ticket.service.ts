@@ -11,6 +11,7 @@ import {
   NotFoundError
 } from '../../utils/errors.js';
 import {
+  ticketInclude,
   TicketRepository,
   type TicketWithRelations
 } from './ticket.repository.js';
@@ -19,7 +20,8 @@ import type {
   ListTicketsQuery,
   UpdateTicketInput
 } from './ticket.schemas.js';
-
+import { canViewTicket } from '../../utils/permissions.js';
+import { prisma } from '../../db/prisma.js';
 const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: [TicketStatus.IN_PROGRESS, TicketStatus.CLOSED],
   IN_PROGRESS: [TicketStatus.RESOLVED, TicketStatus.OPEN],
@@ -39,14 +41,6 @@ type ListTicketsInput = ListTicketsQuery & {
 };
 
 const repository = new TicketRepository();
-
-function canViewTicket(user: AuthUser, ticket: TicketWithRelations) {
-  if (user.role === Role.ADMIN || user.role === Role.AGENT) {
-    return true;
-  }
-
-  return ticket.createdById === user.userId;
-}
 
 function canUpdateTicket(user: AuthUser, ticket: TicketWithRelations) {
   if (user.role === Role.ADMIN) {
@@ -243,8 +237,23 @@ export class TicketService {
         `Cannot move ticket from ${ticket.status} to ${nextStatus}`
       );
     }
-
-    return repository.update(ticketId, { status: nextStatus });
+    const updatedTicket = await prisma.$transaction(async (tx) => {
+      const updated = await tx.ticket.update({
+        where: { id: ticketId },
+        data: { status: nextStatus },
+        include: ticketInclude
+      });
+      await tx.statusHistory.create({
+        data: {
+          ticketId,
+          fromStatus: ticket.status,
+          toStatus: nextStatus,
+          changedById: currentUser.userId
+        }
+      });
+      return updated;
+    });
+    return updatedTicket;
   }
 
   async assignTicket(

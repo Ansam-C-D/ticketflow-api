@@ -10,6 +10,8 @@ import {
   ticketIdParamSchema,
   updateTicketSchema
 } from './ticket.schemas.js';
+import { commentRoutes } from '../comments/comment.routes.js';
+import { historyRoutes } from '../history/history.routes.js';
 
 export const ticketRoutes = Router();
 
@@ -148,3 +150,10 @@ ticketRoutes.patch(
     ticketController.assign(req, res).catch(next);
   }
 );
+
+// comments
+
+ticketRoutes.use('/:id/comments', commentRoutes);
+
+//history
+ticketRoutes.use('/:id/history', historyRoutes);
