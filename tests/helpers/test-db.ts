@@ -1,5 +1,6 @@
 import { execSync } from 'node:child_process';
 import { PrismaClient } from '@prisma/client';
+import { clear } from 'node:console';
 
 const repoRoot = process.cwd();
 
@@ -56,6 +57,8 @@ function run(command: string) {
 
 export async function resetTestDatabase() {
   run('npx prisma migrate deploy');
+  await prisma.statusHistory.deleteMany();
+  await prisma.comments.deleteMany();
   await prisma.ticket.deleteMany();
   await prisma.user.deleteMany();
   run('npm run db:seed');

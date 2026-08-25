@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Comments" ALTER COLUMN "updatedAt" DROP NOT NULL,
+ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "StatusHistory" ALTER COLUMN "updatedAt" DROP NOT NULL;

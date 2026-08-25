@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { Role } from '@prisma/client';
-import { env } from '../config/env.js';
-import type { AuthUser } from '../types/auth.js';
+import { env } from '../config/env.ts';
+import type { AuthUser } from '../types/auth.ts';
 
 type JwtPayload = AuthUser & jwt.JwtPayload;
 

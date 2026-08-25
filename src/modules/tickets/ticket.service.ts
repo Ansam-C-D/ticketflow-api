@@ -4,21 +4,21 @@ import {
   type TicketPriority,
   type Prisma
 } from '@prisma/client';
-import type { AuthUser } from '../../types/auth.js';
+import type { AuthUser } from '../../types/auth.ts';
 import {
   BadRequestError,
   ForbiddenError,
   NotFoundError
-} from '../../utils/errors.js';
+} from '../../utils/errors.ts';
 import {
   TicketRepository,
   type TicketWithRelations
-} from './ticket.repository.js';
+} from './ticket.repository.ts';
 import type {
   CreateTicketInput,
   ListTicketsQuery,
   UpdateTicketInput
-} from './ticket.schemas.js';
+} from './ticket.schemas.ts';
 
 const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: [TicketStatus.IN_PROGRESS, TicketStatus.CLOSED],
@@ -244,7 +244,7 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    return repository.update(ticketId, { status: nextStatus }, ticket.status, String(currentUser));
   }
 
   async assignTicket(

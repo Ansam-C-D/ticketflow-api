@@ -1,9 +1,9 @@
 import { Role } from '@prisma/client';
 import { Router } from 'express';
-import { requireAuth, requireRole } from '../../middleware/auth.middleware.js';
-import { validate } from '../../middleware/validation.middleware.js';
-import { userController } from './user.controller.js';
-import { userListQuerySchema } from './user.schemas.js';
+import { requireAuth, requireRole } from '../../middleware/auth.middleware.ts';
+import { validate } from '../../middleware/validation.middleware.ts';
+import { userController } from './user.controller.ts';
+import { userListQuerySchema } from './user.schemas.ts';
 
 export const userRoutes = Router();
 

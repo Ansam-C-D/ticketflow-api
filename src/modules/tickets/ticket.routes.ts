@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/auth.middleware.js';
-import { validate } from '../../middleware/validation.middleware.js';
-import { ticketController } from './ticket.controller.js';
+import { requireAuth } from '../../middleware/auth.middleware.ts';
+import { validate } from '../../middleware/validation.middleware.ts';
+import { ticketController } from './ticket.controller.ts';
 import {
   assignTicketSchema,
   changeTicketStatusSchema,
@@ -9,7 +9,7 @@ import {
   listTicketsQuerySchema,
   ticketIdParamSchema,
   updateTicketSchema
-} from './ticket.schemas.js';
+} from './ticket.schemas.ts';
 
 export const ticketRoutes = Router();
 
