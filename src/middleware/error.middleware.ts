@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import type { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { env } from '../config/env.js';
-import { AppError } from '../utils/errors.js';
+import { env } from '../config/env.ts';
+import { AppError } from '../utils/errors.ts';
 
 export function notFoundHandler(
   _request: Request,
