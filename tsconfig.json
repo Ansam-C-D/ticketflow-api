@@ -14,7 +14,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src", "prisma", "tests"],
   "exclude": ["dist", "node_modules"]

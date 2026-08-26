@@ -4,14 +4,14 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { prisma } from './db/prisma.js';
+import { prisma } from './db/prisma.ts';
 import {
   errorHandler,
   notFoundHandler
-} from './middleware/error.middleware.js';
-import { authRoutes } from './modules/auth/auth.routes.js';
-import { userRoutes } from './modules/users/user.routes.js';
-import { ticketRoutes } from './modules/tickets/ticket.routes.js';
+} from './middleware/error.middleware.ts';
+import { authRoutes } from './modules/auth/auth.routes.ts';
+import { userRoutes } from './modules/users/user.routes.ts';
+import { ticketRoutes } from './modules/tickets/ticket.routes.ts';
 
 const swaggerSpec = swaggerJsdoc({
   definition: {
@@ -34,7 +34,7 @@ const swaggerSpec = swaggerJsdoc({
 });
 
 export const app = express();
-
+app.set('json spaces', 2);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

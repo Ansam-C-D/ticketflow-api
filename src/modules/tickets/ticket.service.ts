@@ -4,21 +4,21 @@ import {
   type TicketPriority,
   type Prisma
 } from '@prisma/client';
-import type { AuthUser } from '../../types/auth.js';
+import type { AuthUser } from '../../types/auth.ts';
 import {
   BadRequestError,
   ForbiddenError,
   NotFoundError
-} from '../../utils/errors.js';
+} from '../../utils/errors.ts';
 import {
   TicketRepository,
   type TicketWithRelations
-} from './ticket.repository.js';
+} from './ticket.repository.ts';
 import type {
   CreateTicketInput,
   ListTicketsQuery,
   UpdateTicketInput
-} from './ticket.schemas.js';
+} from './ticket.schemas.ts';
 
 const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: [TicketStatus.IN_PROGRESS, TicketStatus.CLOSED],
@@ -206,7 +206,7 @@ export class TicketService {
       updateData.priority = input.priority;
     }
 
-    return repository.update(ticketId, updateData);
+    return repository.update(ticketId, updateData, currentUser.userId);
   }
 
   async deleteTicket(currentUser: AuthUser, ticketId: string) {
@@ -244,7 +244,11 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    return repository.update(
+      ticketId,
+      { status: nextStatus },
+      currentUser.userId
+    );
   }
 
   async assignTicket(
@@ -274,6 +278,10 @@ export class TicketService {
       throw new ForbiddenError('Agents can only assign tickets to themselves');
     }
 
-    return repository.update(ticket.id, { assignedToId: assignee.id });
+    return repository.update(
+      ticket.id,
+      { assignedToId: assignee.id },
+      currentUser.userId
+    );
   }
 }
