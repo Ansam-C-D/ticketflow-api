@@ -1,9 +1,9 @@
 import { Role, type User } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { prisma } from '../../db/prisma.js';
-import { ConflictError, UnauthorizedError } from '../../utils/errors.js';
-import { signToken } from '../../utils/jwt.js';
-import type { LoginInput, RegisterInput } from './auth.schemas.js';
+import { prisma } from '../../db/prisma.ts';
+import { ConflictError, UnauthorizedError } from '../../utils/errors.ts';
+import { signToken } from '../../utils/jwt.ts';
+import type { LoginInput, RegisterInput } from './auth.schemas.ts';
 
 function toSafeUser(user: User) {
   const { passwordHash, ...safeUser } = user;

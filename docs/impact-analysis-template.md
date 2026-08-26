@@ -2,35 +2,51 @@
 
 ## Existing Request Flow
 
-Describe the current request flow.
+- **Flow Sequence**: Client -> Docker -> Router -> Middleware -> Controller -> Service -> Repository -> Prisma -> Docker (PostgreSQL Container)
 
 ## Database Impact
 
-Which tables/models need to change?
+- **New Tables**: `Comments` and `Status History`.
+- **Relations**: Linked to existing `User` and `Ticket` tables via foreign keys.
 
 ## API Impact
 
-Which endpoints need to be added or changed?
+- **New Endpoints**:
+  - `POST /api/tickets/:id/comments`
+  - `GET /api/tickets/:id/comments`
+  - `/api/tickets/:id/status-history`
 
 ## Service Impact
 
-Which services need to change?
+- CommentService
+- StatusHistoryService
 
 ## Repository/Data Access Impact
 
-Which repositories need to change?
+- **New Repositories**: `CommentRepository` and `StatusHistoryRepository` handle direct Prisma queries.
+- **TicketRepository**: Modified the update method to write a log record to `status_History` when a ticket status changes.
 
 ## Authorization Impact
 
-Which permissions need to be added or modified?
+- **Comments**:
+  - **ADMIN**: Can view all comments.
+  - **AGENT**: Can add and view comments strictly on tickets assigned to them.
+  - **USER**: Can add and view comments strictly on tickets they personally created.
+- **Status History**:
+  - **ADMIN**: Can retrieve full system-wide status history reports.
+  - **AGENT**: Can view the status history strictly for tickets assigned to them.
+  - **USER**: Can view the status history strictly for tickets they personally created.
 
 ## Testing Impact
 
-Which tests need to be added?
+- **New Test Files**:
+  - `comments.integration.spec.ts`: Tests the POST endpoint to create a comment and the GET endpoint to list comments.
+  - `status.integration.test.ts`: Tests the paginated GET endpoint to view the ticket status history.
 
 ## Migration Plan
 
-What database migration is required?
+- Migrated the `Commnets` table.
+- Migrated the `Status_History` table.
 
 ## Risks
 

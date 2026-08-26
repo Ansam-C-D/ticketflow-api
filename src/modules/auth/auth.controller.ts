@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import type { AuthenticatedRequest } from '../../types/auth.js';
-import type { LoginInput, RegisterInput } from './auth.schemas.js';
-import { AuthService } from './auth.service.js';
+import type { AuthenticatedRequest } from '../../types/auth.ts';
+import type { LoginInput, RegisterInput } from './auth.schemas.ts';
+import { AuthService } from './auth.service.ts';
 
 const authService = new AuthService();
 

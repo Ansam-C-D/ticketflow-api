@@ -1,6 +1,6 @@
 import { TicketStatus } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
-import { isValidStatusTransition } from '../../src/modules/tickets/ticket.service.js';
+import { isValidStatusTransition } from '../../src/modules/tickets/ticket.service.ts';
 
 describe('ticket status transition rules', () => {
   it('allows configured forward and reopen transitions', () => {

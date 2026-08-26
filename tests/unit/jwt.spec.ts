@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
-import { signToken, verifyToken } from '../../src/utils/jwt.js';
+import { signToken, verifyToken } from '../../src/utils/jwt.ts';
 
 describe('jwt helpers', () => {
   it('round-trips the auth payload', () => {

@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { Role } from '@prisma/client';
-import { verifyToken } from '../utils/jwt.js';
-import { ForbiddenError, UnauthorizedError } from '../utils/errors.js';
-import type { AuthenticatedRequest } from '../types/auth.js';
+import { verifyToken } from '../utils/jwt.ts';
+import { ForbiddenError, UnauthorizedError } from '../utils/errors.ts';
+import type { AuthenticatedRequest } from '../types/auth.ts';
 
 export function requireAuth(
   request: Request,

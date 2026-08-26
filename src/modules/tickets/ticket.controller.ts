@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { AuthenticatedRequest } from '../../types/auth.js';
+import type { AuthenticatedRequest } from '../../types/auth.ts';
 import type {
   AssignTicketInput,
   ChangeTicketStatusInput,
@@ -7,7 +7,7 @@ import type {
   ListTicketsQuery,
   UpdateTicketInput
 } from './ticket.schemas.js';
-import { TicketService } from './ticket.service.js';
+import { TicketService } from './ticket.service.ts';
 
 const ticketService = new TicketService();
 
