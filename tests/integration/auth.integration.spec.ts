@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { api } from '../helpers/test-app.js';
+import { api } from '../helpers/test-app.ts';
 import {
   disconnectTestDatabase,
   resetTestDatabase

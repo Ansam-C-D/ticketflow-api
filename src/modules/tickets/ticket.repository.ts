@@ -1,5 +1,6 @@
 import type { Prisma, TicketPriority, TicketStatus } from '@prisma/client';
-import { prisma } from '../../db/prisma.js';
+import { prisma } from '../../db/prisma.ts';
+import tr from 'zod/v4/locales/tr.js';
 
 const ticketInclude = {
   createdBy: {
@@ -76,10 +77,35 @@ export class TicketRepository {
   }
 
   async update(id: string, data: Prisma.TicketUncheckedUpdateInput) {
-    return prisma.ticket.update({
-      where: { id },
-      data,
-      include: ticketInclude
+    if (!data.status) {
+      return prisma.ticket.update({
+        where: { id },
+        data,
+        include: ticketInclude
+      });
+    }
+    return prisma.$transaction(async (tx) => {
+      const currentTicket = await tx.ticket.findUniqueOrThrow({
+        where: { id },
+        select: {
+          status: true,
+          assignedTo: true
+        }
+      });
+      const updatedTicket = await tx.ticket.update({
+        where: { id },
+        data,
+        include: ticketInclude
+      });
+      await tx.status_History.create({
+        data: {
+          ticketId: id,
+          fromStatus: currentTicket.status,
+          toStatus: data.status as TicketStatus,
+          changedById: updatedTicket.assignedToId!
+        }
+      });
+      return updatedTicket;
     });
   }
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/auth.middleware.js';
-import { validate } from '../../middleware/validation.middleware.js';
-import { ticketController } from './ticket.controller.js';
+import { requireAuth } from '../../middleware/auth.middleware.ts';
+import { validate } from '../../middleware/validation.middleware.ts';
+import { ticketController } from './ticket.controller.ts';
 import {
   assignTicketSchema,
   changeTicketStatusSchema,
@@ -9,7 +9,9 @@ import {
   listTicketsQuerySchema,
   ticketIdParamSchema,
   updateTicketSchema
-} from './ticket.schemas.js';
+} from './ticket.schemas.ts';
+import { commentRoutes } from '../comments/comments.router.ts';
+import { statusHistoryRoutes } from '../status_history/status.routes.ts';
 
 export const ticketRoutes = Router();
 
@@ -148,3 +150,7 @@ ticketRoutes.patch(
     ticketController.assign(req, res).catch(next);
   }
 );
+
+ticketRoutes.use('/:id/comments', commentRoutes);
+ticketRoutes.use('/:id/comments', commentRoutes);
+ticketRoutes.use('/:id/status-history', statusHistoryRoutes);

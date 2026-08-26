@@ -1,5 +1,5 @@
 import type { Role } from '@prisma/client';
-import { prisma } from '../../db/prisma.js';
+import { prisma } from '../../db/prisma.ts';
 
 type UserListFilter = {
   role?: Role;
