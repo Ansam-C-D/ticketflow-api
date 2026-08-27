@@ -71,6 +71,7 @@ function canDeleteTicket(user: AuthUser) {
 }
 
 function canChangeStatus(user: AuthUser, ticket: TicketWithRelations) {
+  console.log('JJ', ticket.assignedToId, user.userId);
   if (user.role === Role.ADMIN) {
     return true;
   }
@@ -244,7 +245,8 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    // return repository.update(ticketId, { status: nextStatus });
+    return repository.updateStatus(currentUser, ticketId, nextStatus);
   }
 
   async assignTicket(

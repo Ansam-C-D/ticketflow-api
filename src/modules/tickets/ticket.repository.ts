@@ -1,5 +1,7 @@
 import type { Prisma, TicketPriority, TicketStatus } from '@prisma/client';
 import { prisma } from '../../db/prisma.js';
+import { NotFoundError } from '../../utils/errors.js';
+import type { AuthUser } from '../../types/auth.js';
 
 const ticketInclude = {
   createdBy: {
@@ -80,6 +82,42 @@ export class TicketRepository {
       where: { id },
       data,
       include: ticketInclude
+    });
+  }
+
+  async updateStatus(
+    currentUser: AuthUser,
+    id: string,
+    newStatus: TicketStatus
+  ) {
+    return await prisma.$transaction(async (tx) => {
+      const old = await tx.ticket.findFirst({
+        where: {
+          id: id
+        }
+      });
+      if (!old?.status) {
+        throw new NotFoundError(
+          'TICKET NOT FOUND',
+          'Failed to find ticket for status update'
+        );
+      }
+      await tx.ticket.update({
+        where: {
+          id
+        },
+        data: { status: newStatus },
+        include: ticketInclude
+      });
+
+      await tx.ticketStatusHistory.create({
+        data: {
+          ticketId: id,
+          fromStatus: old.status,
+          toStatus: newStatus,
+          changedBy: currentUser.userId
+        }
+      });
     });
   }
 
