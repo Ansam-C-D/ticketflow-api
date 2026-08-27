@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.middleware.js';
 import { validate } from '../../middleware/validation.middleware.js';
-import { CreateComment } from './comment.schemas.js';
+import { CreateComment, ListCommentsQuery } from './comment.schemas.js';
 import { commentController } from './comment.controller.js';
 
 export const commentRoutes = Router();
@@ -31,14 +31,14 @@ commentRoutes.use(requireAuth);
  *              description: Comment added
  */
 
-commentRoutes.post(
+commentRoutes.post('/', validate({ body: CreateComment }), (req, res, next) => {
+  commentController.create(req, res).catch(next);
+});
+
+commentRoutes.get(
   '/',
-  (_, __, next) => {
-    console.log('hi');
-    next();
-  },
-  validate({ body: CreateComment }),
+  validate({ query: ListCommentsQuery }),
   (req, res, next) => {
-    commentController.create(req, res).catch(next);
+    commentController.list(req, res).catch(next);
   }
 );
