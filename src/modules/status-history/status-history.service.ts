@@ -1,9 +1,17 @@
-import { Role } from '@prisma/client';
+import { Role, type Ticket } from '@prisma/client';
 import type { AuthUser } from '../../types/auth';
 import { ForbiddenError, NotFoundError } from '../../utils/errors';
 import { StatusHistoryRepository } from './status-history.repository';
 
 const repository = new StatusHistoryRepository();
+
+function canViewStatusHistory(currentUser: AuthUser, ticket: Ticket) {
+  if (currentUser.role === Role.ADMIN || currentUser.role === Role.AGENT) {
+    return true;
+  }
+
+  return ticket.createdById === currentUser.userId;
+}
 
 export class StatusHistoryService {
   async listHistory(currentUser: AuthUser, ticketId: string) {
@@ -13,14 +21,7 @@ export class StatusHistoryService {
       throw new NotFoundError('TICKET_NOT_FOUND', 'Ticket not found');
     }
 
-    const canViewStatusHistory =
-      currentUser.role === Role.ADMIN ||
-      (currentUser.role === Role.AGENT &&
-        ticket.assignedToId === currentUser.userId) ||
-      (currentUser.role === Role.USER &&
-        ticket.createdById === currentUser.userId);
-
-    if (!canViewStatusHistory) {
+    if (!canViewStatusHistory(currentUser, ticket)) {
       throw new ForbiddenError(
         'You are not allowed to view status history on this ticket'
       );
