@@ -28,6 +28,7 @@ export function errorHandler(
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Request validation failed',
+        stack: error.stack,
         details: error.flatten()
       }
     });

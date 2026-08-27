@@ -23,6 +23,7 @@ function assignRequestProperty<T>(
 
 export function validate(schemas: RequestSchemas) {
   return (request: Request, _response: Response, next: NextFunction) => {
+    console.log('Validate', request);
     try {
       if (schemas.body) {
         assignRequestProperty(
@@ -50,6 +51,7 @@ export function validate(schemas: RequestSchemas) {
 
       next();
     } catch (error) {
+      console.log('catch');
       if (error instanceof ZodError) {
         next(error);
         return;
