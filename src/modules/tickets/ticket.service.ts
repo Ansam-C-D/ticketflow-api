@@ -19,6 +19,7 @@ import type {
   ListTicketsQuery,
   UpdateTicketInput
 } from './ticket.schemas.js';
+import { prisma } from '../../db/prisma.js';
 
 const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: [TicketStatus.IN_PROGRESS, TicketStatus.CLOSED],
@@ -244,7 +245,22 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    return prisma.$transaction(async (tx) => {
+      const updatedTicket = await tx.ticket.update({
+        where: { id: ticketId },
+        data: { status: nextStatus }
+      });
+
+      await tx.statusHistory.create({
+        data: {
+          ticketId,
+          fromStatus: ticket.status,
+          toStatus: nextStatus,
+          changedById: currentUser.userId
+        }
+      });
+      return updatedTicket;
+    });
   }
 
   async assignTicket(
