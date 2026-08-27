@@ -12,6 +12,8 @@ import {
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { userRoutes } from './modules/users/user.routes.js';
 import { ticketRoutes } from './modules/tickets/ticket.routes.js';
+import { commentRoutes } from './modules/comments/comment.routes.js';
+import { statusHistoryRoutes } from './modules/status-history/status-history.routes.js';
 
 const swaggerSpec = swaggerJsdoc({
   definition: {
@@ -56,6 +58,8 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/tickets', commentRoutes);
+app.use('/api/tickets', statusHistoryRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
