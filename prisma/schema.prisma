@@ -64,13 +64,13 @@ model Ticket {
 
 model Comment {
   ticketId  String
-  userId    String
+  authorId    String
   body      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   ticket   Ticket @relation(fields: [ticketId], references: [id])
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [authorId], references: [id])
 
-  @@id([ticketId, userId])
+  @@id([ticketId, authorId])
 }
