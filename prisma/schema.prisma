@@ -72,8 +72,8 @@ model TicketStatusHistory {
   changedBy     String
   createdAt     DateTime      @default(now())
 
-  changedUser   User          @relation(fields: [changedBy], references: [id])
-  changedTicket Ticket        @relation(fields: [ticketId], references: [id])
+  changedUser   User          @relation(fields: [changedBy], references: [id], onDelete: Cascade)
+  changedTicket Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
