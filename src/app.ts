@@ -57,7 +57,8 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/comments', commentRoutes);
+app.use('/api/tickets/:ticketId/comments', commentRoutes);
+app.use('/api/tickets/comments', commentRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

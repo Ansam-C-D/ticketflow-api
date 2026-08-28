@@ -1,5 +1,9 @@
 import type { AuthUser } from '../../types/auth';
-import type { CreateComment, ListCommentsQuery } from './comment.schemas';
+import type {
+  CreateComment,
+  GetCommentsQuery,
+  ListCommentsQuery
+} from './comment.schemas';
 import { CommentRepository } from './comment.repository';
 import { AppError, UnauthorizedError } from '../../utils/errors';
 import { prisma } from '../../db/prisma';
@@ -48,5 +52,12 @@ export class CommentService {
     });
     console.log(result);
     return result;
+  }
+
+  async getComments(currentUser: AuthUser, input: GetCommentsQuery) {
+    console.log('Input', input);
+    if (input.ticketId) {
+      return await repository.getComment(input.ticketId);
+    }
   }
 }

@@ -19,4 +19,11 @@ export class CommentRepository {
       take: input.limit
     });
   }
+  async getComment(ticketId: string) {
+    return await prisma.comment.findMany({
+      where: {
+        ticketId
+      }
+    });
+  }
 }
