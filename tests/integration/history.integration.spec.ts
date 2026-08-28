@@ -66,7 +66,7 @@ describe('History API', () => {
         status: 'RESOLVED'
       });
 
-    expect(response.body).toBe(200);
+    expect(response.status).toBe(200);
 
     const histories = await api
       .get(`/api/tickets/${tickets[1]?.id}/status-history`)
