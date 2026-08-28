@@ -15,7 +15,8 @@ function authUser(request: Request) {
 export class CommentController {
   async create(request: Request, response: Response) {
     const cc: CreateComment = {
-      body: request.body as string,
+      // eslint-disable-next-line
+      body: request.body.body as string,
       ticketId: request.params.ticketId as string
     };
     // CreateComment.parse(cc)

@@ -16,7 +16,7 @@ process.env.DATABASE_URL = testDatabaseUrl;
 process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret';
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? '1h';
 
-const prisma = new PrismaClient({
+export const prisma = new PrismaClient({
   datasources: {
     db: {
       url: testDatabaseUrl

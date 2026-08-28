@@ -25,10 +25,12 @@ export class CommentService {
         currentUser.userId === ticket.assignedToId) ||
       currentUser.userId === ticket.createdById
     ) {
-      const comment = await repository.create({
+      const finalCC = {
         ...input,
         ...{ authorId: currentUser.userId }
-      });
+      };
+      console.log('FINALCC', finalCC);
+      const comment = await repository.create(finalCC);
       if (!comment)
         throw new AppError(500, 'DB Insert failed', 'Failed to add a comment');
       return comment;

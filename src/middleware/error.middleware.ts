@@ -49,7 +49,8 @@ export function errorHandler(
     response.status(400).json({
       error: {
         code: 'DATABASE_ERROR',
-        message: 'Database request failed'
+        message: 'Database request failed',
+        ogMsg: error.message
       }
     });
     return;
