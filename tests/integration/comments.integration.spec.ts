@@ -16,7 +16,7 @@ describe('Comment API', async () => {
   let adminToken: string;
   let _agentToken: string;
   let user1Token: string;
-  let _user2Token: string;
+  let user2Token: string;
   let _agentId: string;
 
   const tickets = await prisma.ticket.findMany();
@@ -27,7 +27,7 @@ describe('Comment API', async () => {
     adminToken = await login('admin@example.com', 'Admin123!');
     _agentToken = await login('agent@example.com', 'Agent123!');
     user1Token = await login('user1@example.com', 'User123!');
-    _user2Token = await login('user2@example.com', 'User234!');
+    user2Token = await login('user2@example.com', 'User234!');
 
     const usersResponse = await api
       .get('/api/users?role=AGENT')
@@ -60,6 +60,21 @@ describe('Comment API', async () => {
     const commentsOfTicket = await api
       .get(`/api/tickets/${tickets[0]?.id}/comments`)
       .set('Authorization', `Bearer ${user1Token}`)
+      .send();
+
+    expect(commentsOfTicket.body).toEqual(expect.any(Array));
+
+    (commentsOfTicket.body as Comment[]).forEach((comment) => {
+      expect(comment.ticketId).toEqual(tickets[0]?.id);
+    });
+  });
+
+  it('blocks retrieves of all comments of a ticket by unauthorized user', async () => {
+    // const tickets = await prisma.ticket.findMany()
+
+    const commentsOfTicket = await api
+      .get(`/api/tickets/${tickets[0]?.id}/comments`)
+      .set('Authorization', `Bearer ${user2Token}`)
       .send();
 
     expect(commentsOfTicket.body).toEqual(expect.any(Array));
