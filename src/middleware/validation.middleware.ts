@@ -23,7 +23,7 @@ function assignRequestProperty<T>(
 
 export function validate(schemas: RequestSchemas) {
   return (request: Request, _response: Response, next: NextFunction) => {
-    console.log('Validate', request);
+    // console.log('Validate', request);
     try {
       if (schemas.body) {
         assignRequestProperty(

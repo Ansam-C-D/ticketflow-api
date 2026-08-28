@@ -17,6 +17,7 @@ export class CommentService {
       });
       if (!comment)
         throw new AppError(500, 'DB Insert failed', 'Failed to add a comment');
+      return comment;
     }
   }
 
