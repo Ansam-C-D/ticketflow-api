@@ -41,14 +41,7 @@ export class CommentService {
   }
 
   async listComments(currentUser: AuthUser, input: ListCommentsQuery) {
-    const where: Record<string, unknown> = {}; //'where' is never reassigned. Use 'const' instead.
-    if (input.ticketId) {
-      where.ticketId = input.ticketId;
-    }
-
-    console.log('WHERE', where, input);
     const result = await prisma.comment.findMany({
-      where: where,
       skip: (input.page - 1) * input.limit,
       take: input.limit
     });

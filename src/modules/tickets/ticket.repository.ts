@@ -102,7 +102,7 @@ export class TicketRepository {
           'Failed to find ticket for status update'
         );
       }
-      await tx.ticket.update({
+      const result = await tx.ticket.update({
         where: {
           id
         },
@@ -118,6 +118,7 @@ export class TicketRepository {
           changedBy: currentUser.userId
         }
       });
+      return result;
     });
   }
 

@@ -31,7 +31,6 @@ export class CommentController {
   }
 
   async getComments(request: Request, reponse: Response) {
-    console.log('PArams', request);
     const params: GetCommentsQuery = GetCommentsQuery.parse(request.params);
     const tickets = await commentService.getComments(authUser(request), params);
     reponse.json(tickets);

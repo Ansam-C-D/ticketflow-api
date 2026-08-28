@@ -47,6 +47,7 @@ commentRoutes.get(
   '/list',
   validate({ query: ListCommentsQuery }),
   (req, res, next) => {
+    console.log('Comments list');
     commentController.list(req, res).catch(next);
   }
 );

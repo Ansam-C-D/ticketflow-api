@@ -95,4 +95,27 @@ describe('Comment API', async () => {
     expect(response.statusCode).toBe(403);
     expect(response.body).toHaveProperty('error');
   });
+
+  it('It returns comments with pagenation', async () => {
+    const commentsOfTicket = await api
+      .get(`/api/tickets/comments/list?limit=2&page=1`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send();
+
+    expect(commentsOfTicket.body.length).toBe(2);
+
+    const secondCommentsOfTicket = await api
+      .get(`/api/tickets/comments/list?limit=2&page=2`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send();
+
+    expect(commentsOfTicket.body).not.toEqual(secondCommentsOfTicket.body);
+
+    const morePageSize = await api
+      .get(`/api/tickets/comments/list?limit=3&page=1`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send();
+
+    expect(morePageSize.body.length).toBe(3);
+  });
 });
