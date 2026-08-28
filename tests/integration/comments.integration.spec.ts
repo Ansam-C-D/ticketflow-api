@@ -5,24 +5,26 @@ import {
   prisma,
   resetTestDatabase
 } from '../helpers/test-db.js';
-import type { Comment } from '@prisma/client';
+import type { Comment, Ticket } from '@prisma/client';
 
 async function login(email: string, password: string) {
   const response = await api.post('/api/auth/login').send({ email, password });
   return response.body.data.token as string;
 }
 
-describe('Comment API', async () => {
+describe('Comment API', () => {
   let adminToken: string;
   let _agentToken: string;
   let user1Token: string;
   let user2Token: string;
   let _agentId: string;
 
-  const tickets = await prisma.ticket.findMany();
+  let tickets: Ticket[];
 
   beforeAll(async () => {
     await resetTestDatabase();
+
+    tickets = await prisma.ticket.findMany();
 
     adminToken = await login('admin@example.com', 'Admin123!');
     _agentToken = await login('agent@example.com', 'Agent123!');
