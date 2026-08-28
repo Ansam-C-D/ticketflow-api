@@ -22,7 +22,7 @@ describe('History API', () => {
   let tickets: Ticket[];
   beforeAll(async () => {
     await resetTestDatabase();
-    tickets = await prisma.ticket.findMany();
+    tickets = await prisma.ticket.findMany({ orderBy: { createdAt: 'asc' } });
 
     adminToken = await login('admin@example.com', 'Admin123!');
     _agentToken = await login('agent@example.com', 'Agent123!');
