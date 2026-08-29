@@ -28,6 +28,7 @@ export function errorHandler(
       error: {
         code: 'VALIDATION_ERROR',
         message: 'Request validation failed',
+        stack: error.stack,
         details: error.flatten()
       }
     });
@@ -48,7 +49,8 @@ export function errorHandler(
     response.status(400).json({
       error: {
         code: 'DATABASE_ERROR',
-        message: 'Database request failed'
+        message: 'Database request failed',
+        ogMsg: error.message
       }
     });
     return;

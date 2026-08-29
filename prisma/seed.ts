@@ -4,6 +4,7 @@ import {
   TicketPriority,
   TicketStatus
 } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -164,6 +165,31 @@ async function main() {
       }
     });
   }
+
+  const tickets = await prisma.ticket.findMany();
+
+  const commentInputs: Prisma.CommentUncheckedCreateInput[] = [
+    {
+      ticketId: tickets[0]?.id as string,
+      body: 'Your issues is now solved',
+      authorId: tickets[0]?.createdById as string
+    },
+    {
+      ticketId: tickets[1]?.id as string,
+      body: 'Need more info for us to work on',
+      authorId: tickets[1]?.createdById as string
+    },
+    {
+      ticketId: tickets[2]?.id as string,
+      body: 'Please send the photo of the machine',
+      authorId: tickets[2]?.createdById as string
+    }
+  ];
+  await prisma.comment.deleteMany();
+
+  await prisma.comment.createMany({
+    data: commentInputs
+  });
 }
 
 main()

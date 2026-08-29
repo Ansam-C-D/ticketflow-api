@@ -50,6 +50,7 @@ export function validate(schemas: RequestSchemas) {
 
       next();
     } catch (error) {
+      console.log('catch');
       if (error instanceof ZodError) {
         next(error);
         return;
