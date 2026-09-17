@@ -244,7 +244,12 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    return repository.changeStatus(
+      ticketId,
+      ticket.status,
+      nextStatus,
+      currentUser.userId
+    );
   }
 
   async assignTicket(
@@ -275,5 +280,10 @@ export class TicketService {
     }
 
     return repository.update(ticket.id, { assignedToId: assignee.id });
+  }
+
+  async getStatusHistory(currentUser: AuthUser, ticketId: string) {
+    const ticket = await this.getTicketById(currentUser, ticketId);
+    return repository.getStatusHistory(ticket.id);
   }
 }

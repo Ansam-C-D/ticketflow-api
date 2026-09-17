@@ -101,4 +101,47 @@ export class TicketRepository {
       }
     });
   }
+
+  async changeStatus(
+    id: string,
+    fromStatus: TicketStatus,
+    toStatus: TicketStatus,
+    changedById: string
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const ticket = await tx.ticket.update({
+        where: { id },
+        data: { status: toStatus },
+        include: ticketInclude
+      });
+
+      await tx.statusHistory.create({
+        data: {
+          ticketId: id,
+          fromStatus,
+          toStatus,
+          changedById
+        }
+      });
+      return ticket;
+    });
+  }
+
+  async getStatusHistory(ticketId: string) {
+    return prisma.statusHistory.findMany({
+      where: { ticketId },
+      orderBy: {
+        createdAt: 'asc'
+      },
+      include: {
+        changedBy: {
+          select: {
+            id: true,
+            name: true,
+            role: true
+          }
+        }
+      }
+    });
+  }
 }
