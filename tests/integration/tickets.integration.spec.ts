@@ -207,6 +207,11 @@ describe('ticket API', () => {
     );
 
     expect(historyEntry).toBeDefined();
+
+    if (!historyEntry) {
+      throw new Error('Expected status history entry was not found');
+    }
+
     expect(historyEntry.fromStatus).toBe('OPEN');
     expect(historyEntry.changedBy.email).toBe('agent@example.com');
   });
