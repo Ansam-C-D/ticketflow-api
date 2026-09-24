@@ -8,6 +8,8 @@ import {
   createTicketSchema,
   listTicketsQuerySchema,
   ticketIdParamSchema,
+  ticketIdParamsSchema,
+  createCommentSchema,
   updateTicketSchema
 } from './ticket.schemas.js';
 
@@ -106,6 +108,33 @@ ticketRoutes.delete(
   validate({ params: ticketIdParamSchema }),
   (req, res, next) => {
     ticketController.delete(req, res).catch(next);
+  }
+);
+
+/**
+ * Comments and status history for a ticket
+ */
+ticketRoutes.post(
+  '/:ticketId/comments',
+  validate({ params: ticketIdParamsSchema, body: createCommentSchema }),
+  (req, res, next) => {
+    ticketController.addComment(req, res).catch(next);
+  }
+);
+
+ticketRoutes.get(
+  '/:ticketId/comments',
+  validate({ params: ticketIdParamsSchema }),
+  (req, res, next) => {
+    ticketController.getComments(req, res).catch(next);
+  }
+);
+
+ticketRoutes.get(
+  '/:ticketId/status-history',
+  validate({ params: ticketIdParamsSchema }),
+  (req, res, next) => {
+    ticketController.getStatusHistory(req, res).catch(next);
   }
 );
 

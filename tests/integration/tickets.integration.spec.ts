@@ -150,6 +150,67 @@ describe('ticket API', () => {
     expect(response.body.data.status).toBe('IN_PROGRESS');
   });
 
+  it('adds and retrieves comments with ticket access control', async () => {
+    const createResponse = await api
+      .post('/api/tickets')
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send({
+        title: 'Comment test ticket',
+        description: 'Ticket for testing comments.',
+        priority: 'LOW'
+      });
+
+    expect(createResponse.status).toBe(201);
+    const ticketId = createResponse.body.data.id as string;
+
+    const commentResponse = await api
+      .post(`/api/tickets/${ticketId}/comments`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send({ body: 'This is a test comment.' });
+
+    expect(commentResponse.status).toBe(201);
+    expect(commentResponse.body.data.body).toBe('This is a test comment.');
+    expect(commentResponse.body.data.author.email).toBe('user1@example.com');
+
+    const listResponse = await api
+      .get(`/api/tickets/${ticketId}/comments`)
+      .set('Authorization', `Bearer ${user1Token}`);
+
+    expect(listResponse.status).toBe(200);
+    expect(listResponse.body.data).toHaveLength(1);
+    expect(listResponse.body.data[0].body).toBe('This is a test comment.');
+
+    const forbiddenResponse = await api
+      .get(`/api/tickets/${ticketId}/comments`)
+      .set('Authorization', `Bearer ${user2Token}`);
+
+    expect(forbiddenResponse.status).toBe(403);
+    expect(forbiddenResponse.body.error.code).toBe('FORBIDDEN');
+  });
+
+  it('records successful status changes in status history', async () => {
+    const response = await api
+      .get('/api/tickets/unable-to-reset-password/status-history')
+      .set('Authorization', `Bearer ${agentToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBeGreaterThanOrEqual(1);
+
+    const historyData = response.body.data as Array<{
+      toStatus: string;
+      fromStatus: string;
+      changedBy: { email: string };
+    }>;
+
+    const historyEntry = historyData.find(
+      (entry) => entry.toStatus === 'IN_PROGRESS'
+    );
+
+    expect(historyEntry).toBeDefined();
+    expect(historyEntry.fromStatus).toBe('OPEN');
+    expect(historyEntry.changedBy.email).toBe('agent@example.com');
+  });
+
   it('rejects invalid status transitions', async () => {
     const response = await api
       .patch('/api/tickets/unable-to-reset-password/status')

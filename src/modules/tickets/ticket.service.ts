@@ -14,6 +14,8 @@ import {
   TicketRepository,
   type TicketWithRelations
 } from './ticket.repository.js';
+import { CommentRepository } from './comment.repository.js';
+import { StatusHistoryRepository } from './status-history.repository.js';
 import type {
   CreateTicketInput,
   ListTicketsQuery,
@@ -39,6 +41,8 @@ type ListTicketsInput = ListTicketsQuery & {
 };
 
 const repository = new TicketRepository();
+const commentRepository = new CommentRepository();
+const statusHistoryRepository = new StatusHistoryRepository();
 
 function canViewTicket(user: AuthUser, ticket: TicketWithRelations) {
   if (user.role === Role.ADMIN || user.role === Role.AGENT) {
@@ -219,6 +223,24 @@ export class TicketService {
     return repository.delete(ticket.id);
   }
 
+  async addComment(currentUser: AuthUser, ticketId: string, body: string) {
+    const ticket = await this.getTicketById(currentUser, ticketId);
+
+    return commentRepository.create(ticket.id, currentUser.userId, body);
+  }
+
+  async getComments(currentUser: AuthUser, ticketId: string) {
+    const ticket = await this.getTicketById(currentUser, ticketId);
+
+    return commentRepository.findByTicketId(ticket.id);
+  }
+
+  async getStatusHistory(currentUser: AuthUser, ticketId: string) {
+    const ticket = await this.getTicketById(currentUser, ticketId);
+
+    return statusHistoryRepository.findByTicketId(ticket.id);
+  }
+
   async changeStatus(
     currentUser: AuthUser,
     ticketId: string,
@@ -244,7 +266,12 @@ export class TicketService {
       );
     }
 
-    return repository.update(ticketId, { status: nextStatus });
+    return repository.updateStatusWithHistory(
+      ticketId,
+      ticket.status,
+      nextStatus,
+      currentUser.userId
+    );
   }
 
   async assignTicket(
