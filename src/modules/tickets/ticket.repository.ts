@@ -83,6 +83,32 @@ export class TicketRepository {
     });
   }
 
+  async updateStatusWithHistory(
+    ticketId: string,
+    fromStatus: TicketStatus,
+    toStatus: TicketStatus,
+    changedById: string
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const ticket = await tx.ticket.update({
+        where: { id: ticketId },
+        data: { status: toStatus },
+        include: ticketInclude
+      });
+
+      await tx.statusHistory.create({
+        data: {
+          ticketId,
+          fromStatus,
+          toStatus,
+          changedById
+        }
+      });
+
+      return ticket;
+    });
+  }
+
   async delete(id: string) {
     return prisma.ticket.delete({
       where: { id },

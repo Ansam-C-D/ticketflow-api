@@ -57,6 +57,31 @@ export class TicketController {
     response.json({ data: ticket });
   }
 
+  async addComment(request: Request, response: Response) {
+    const comment = await ticketService.addComment(
+      authUser(request),
+      String(request.params.ticketId),
+      (request.body as { body: string }).body
+    );
+    response.status(201).json({ data: comment });
+  }
+
+  async getComments(request: Request, response: Response) {
+    const comments = await ticketService.getComments(
+      authUser(request),
+      String(request.params.ticketId)
+    );
+    response.json({ data: comments });
+  }
+
+  async getStatusHistory(request: Request, response: Response) {
+    const history = await ticketService.getStatusHistory(
+      authUser(request),
+      String(request.params.ticketId)
+    );
+    response.json({ data: history });
+  }
+
   async changeStatus(request: Request, response: Response) {
     const ticket = await ticketService.changeStatus(
       authUser(request),
