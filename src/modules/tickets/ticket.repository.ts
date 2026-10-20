@@ -20,6 +20,30 @@ const ticketInclude = {
   }
 } satisfies Prisma.TicketInclude;
 
+const statusInclude = {
+  ticket: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      priority: true
+    }
+  },
+  user: {
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true
+    }
+  }
+} satisfies Prisma.StatusHistoryInclude;
+
+export type StatusHistoryWithRelations = Prisma.StatusHistoryGetPayload<{
+  include: typeof statusInclude;
+}>;
+
 export type TicketWithRelations = Prisma.TicketGetPayload<{
   include: typeof ticketInclude;
 }>;
@@ -99,6 +123,41 @@ export class TicketRepository {
         name: true,
         email: true
       }
+    });
+  }
+
+  async getStatusHistory(ticketId: string) {
+    return prisma.statusHistory.findMany({
+      where: {
+        ticketId
+      },
+      include: statusInclude
+    });
+  }
+  async changeStatus(
+    ticketId: string,
+    userId: string,
+    status: TicketStatus,
+    nextStatus: TicketStatus
+  ) {
+    return prisma.$transaction(async (transaction) => {
+      const ticket = await transaction.ticket.update({
+        where: {
+          id: ticketId
+        },
+        data: {
+          status: nextStatus
+        }
+      });
+      await transaction.statusHistory.create({
+        data: {
+          ticketId,
+          userId,
+          statusFrom: status,
+          statusTo: nextStatus
+        }
+      });
+      return ticket;
     });
   }
 }
